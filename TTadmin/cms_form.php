@@ -1,0 +1,249 @@
+<?php
+include('includes/configset.php'); 
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AdminLTE | Data Tables</title>
+<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<!-- Ionicons -->
+<link href="//code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+<!-- DATA TABLES -->
+<link href="css/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+<!-- Theme style -->
+<link href="css/AdminLTE.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="css/richtext.min.css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+</head>
+<body class="skin-blue">
+<!-- header logo: style can be found in header.less -->
+<?php include('includes/head.php'); ?>
+<div class="wrapper row-offcanvas row-offcanvas-left"> 
+  <!-- Left side column. contains the logo and sidebar -->
+  <?php include('includes/sidebar.php'); ?>
+  <?php 
+if (isset($_REQUEST['cms'])){$page_id=$_REQUEST['cms'];}else{$page_id=0;}
+$sql_cms="select * from cms_pages WHERE page_id=$page_id"; 
+$result_cms=mysqli_query($link,$sql_cms); 
+$row_cms=mysqli_fetch_array($result_cms);
+?>
+<?php if(isset($_REQUEST['cms'])) { 
+$sub="update";
+$sub2="Update";
+ } 
+ else { 
+ $sub="add";
+ $sub2="Save";
+ } ?>
+  <!-- Right side column. Contains the navbar and content of the page -->
+  <aside class="right-side"> 
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1> Manage CMS <small>Content Managment System</small> </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">CMS</a></li>
+        <li class="active"><?php if(isset($_REQUEST['cms'])) { 
+			  echo "Modify Page- ".$row_cms['title'];
+			  }
+			  else
+			  {
+				echo "Add Page";  
+			  }
+			 
+ ?></li>
+      </ol>
+    </section>
+    
+    <!-- Main content -->
+    <section class="content">
+     
+
+
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title"><?php if(isset($_REQUEST['cms'])) { 
+			  echo "Modify Page- ".$row_cms['title'];
+			  }
+			  else
+			  {
+				echo "Add Page";  
+			  }
+			 
+ ?>  </h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <div class="box box-primary">
+                
+                <!-- /.box-header --> 
+                <!-- form start -->
+                
+<form action="cms_manage.php" method="post" enctype="multipart/form-data" name="cont"  id="myform" onSubmit="return validate();">
+                  
+                  <div class="box-body">
+                  <div class="form-group">
+                                            <label>Select Child Page</label>
+                                            <select name="category" class="form-control">
+    <?php
+	page_parent_f($link);
+	?>
+    </select>
+                                            
+                                        </div>
+                    
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Title</label>
+                      <input type="text" name="page_name" class="form-control" id="exampleInputEmail1" placeholder="Enter Title" value="<?php echo $row_cms['page_name']; ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Page Links</label>
+                      <input type="text" name="seo_keyword" class="form-control" id="exampleInputEmail1" placeholder="Enter Title" value="<?php echo $row_cms['seo_keyword']; ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Sort order</label>
+                      <input type="text" name="sortorder" class="form-control" id="exampleInputEmail1" placeholder="Enter Title" value="<?php echo $row_cms['sortorder']; ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Meta Title</label>
+                      <input type="text" name="meta_title" class="form-control" id="exampleInputEmail1" placeholder="Enter Title" value="<?php echo $row_cms['meta_title']; ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                                            <label>Meta Keywords</label>
+                                            <textarea class="form-control" name="meta_keywords" rows="3" placeholder="Enter ..."><?php echo $row_cms['meta_keywords']; ?></textarea>
+                                        </div>
+                  
+                  <div class="form-group">
+                                            <label>Meta Description</label>
+                                            <textarea class="form-control" name="meta_description" rows="3" placeholder="Enter ..."><?php echo $row_cms['meta_description']; ?></textarea>
+                                        </div>
+                               <div class="form-group">
+                    <label for="exampleInputEmail1">Photo One</label>
+                      <input type="file" name="image" id="image" />
+                      <input type="hidden" name="hiddenimage" id="image" value="<?php echo $row_cms['image']; ?>" />
+                      <?php if($row_cms['image']!='') { image_size(); ?>
+                      <img src="../uploads/<?php echo $row_cms['image'];?>" width="<?php echo $width; ?>100" height="<?php echo $height; ?>" class="alignLeft" />
+                      <?php } ?>
+                    </div>
+                    
+                    <div class="form-group">
+                    <label for="exampleInputEmail1">Photo Two</label>
+                      <input type="file" name="image2" id="image2" />
+                      <input type="hidden" name="hiddenimage2" id="image2" value="<?php echo $row_cms['image2']; ?>" />
+                      <?php if($row_cms['image2']!='') { image_size(); ?>
+                      <img src="../uploads/<?php echo $row_cms['image2'];?>" width="<?php echo $width; ?>100" height="<?php echo $height; ?>" class="alignLeft" />
+                      <?php } ?>
+                    </div>
+                              <div class="form-group">
+                              <label>Position for Link</label>
+                              
+                              <?php if($row_cms['topbar']) { ?>
+                              <div class="checkbox">
+        <input type="checkbox"  value="on" checked="checked" class="katret"  name="topbar"  />
+        <label for="topbar">Topbar </label>
+        </div>
+        <?php } else { ?>
+        <div class="checkbox">
+        <input type="checkbox"   name="topbar" value="on" class="katret"  />
+        <label for="topbar">Topbar </label>
+        </div>
+        <?php } ?>
+        
+        <?php if($row_cms['footer']) { ?>
+        <div class="checkbox">
+        <input type="checkbox"  value="on" checked="checked" class="katret"  name="footer"  />
+        <label for="footer">Footer </label>
+        </div>
+        <?php } else { ?>
+        <div class="checkbox">
+        <input type="checkbox"   name="footer" value="on" class="katret"  />
+        <label for="footer">Footer </label>
+        </div>
+		<?php } ?>
+        
+        <?php if($row_cms['sidebar']) { ?>
+        <div class="checkbox">
+        <input type="checkbox" name="sidebar" class="katret" checked="checked" value="on"  />
+        <label for="sidebar">Sidebar </label>
+        </div>
+		<?php } else { ?>
+        <div class="checkbox">
+        <input type="checkbox" name="sidebar" class="katret"  value="on"  />
+        <label for="sidebar">Sidebar </label>
+        </div>
+		<?php } ?>
+                                            
+                                        </div>
+                                        
+                            <div class="box-body pad">
+                                     <label for="sidebar">Short Description </label>
+                                        <textarea id="editor2" class="form-control" name="shortdescription" placeholder="Enter ..."><?php echo $row_cms['shortdescription']; ?></textarea>
+                                    
+                                </div>             
+                    <div class='box-body pad'>
+                                    <label for="sidebar">Full Description </label>
+                                        <textarea id="editor1" class="editor1" name="content" rows="10"  cols="80">
+                                            <?php echo $row_cms['content']; ?>
+                                        </textarea>
+                                    
+                                </div>
+                    
+                    
+                  </div>
+                  <!-- /.box-body -->
+                  
+                  <div class="box-footer">
+                  
+                  <input type='hidden' name='page_id' id='page_id' maxlength="50"   size="30" value="<?php echo $row_cms['page_id']; ?>"/>
+                  
+                  <button type="submit"  name="<?php echo $sub ?>" class="btn btn-primary"><?php echo $sub2 ?></button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.box-body --> 
+          </div>
+          <!-- /.box --> 
+        </div>
+      </div>
+    </section>
+    <!-- /.content --> 
+  </aside>
+  <!-- /.right-side --> 
+</div>
+<!-- ./wrapper --> 
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+ <script type="text/javascript" src="js/jquery.richtext.js"></script>
+ 
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script> 
+<!-- DATA TABES SCRIPT --> 
+<!-- AdminLTE App --> 
+<script src="js/AdminLTE/app.js" type="text/javascript"></script> 
+<!-- AdminLTE for demo purposes --> 
+<script src="js/AdminLTE/demo.js" type="text/javascript"></script>
+ <script>
+        $(document).ready(function() {
+            $('.editor1').richText();
+        });
+        </script> 
+<!-- page script --> 
+
+</body>
+</html>
